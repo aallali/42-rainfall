@@ -1,0 +1,5 @@
+set disassembly-flavor intel
+checksec --file ./level2
+Running the command `checksec --file ./level2, we see that the stack is executable (NX disabled).
+python -c "print('a' * 75)" | ltrace ./level2
+file ./level2
