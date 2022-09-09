@@ -1,0 +1,34 @@
+
+
+function p() {
+ 
+    eax = stdout()
+    fflush(eax)
+    let input[80] // ebp-0x4c
+    esp = input 
+    gets(*esp)
+    // moved ebp+0x4 to ebp-0xc
+    returnAdress = ebp-0xc
+    |- - - -> return address of [p] function
+
+    const result = returnAdress && 0xb0000000 
+    |- - - -> "and" operation to delete function address beginging with 0xb if any
+
+    if (result == 0xb0000000) { 
+        |- - - -> this check is made to not overwrite the return address with a system function address
+        // const printfString = 0x8048620 =  "(%p)\n"
+        printf("(%p)\n", returnAdress) |- - - -> p+51 -> p+66
+        exit(1)
+    } else { 
+        |- - - - - > jump to p+83
+        puts(input)
+        strdup(input)
+        return
+    }
+   
+}
+
+
+function main() {
+    p()
+}
