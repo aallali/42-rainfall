@@ -1,0 +1,21 @@
+
+function	o()
+{
+	system("/bin/sh");
+	exit(1)
+}
+
+function	n()
+{
+	char	buffer[512];
+
+	fgets(buffer, 512, stdin);
+	printf(buffer);
+	exit(1);
+}
+
+function		main()
+{
+	n();
+	return 
+}
