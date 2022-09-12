@@ -1,0 +1,25 @@
+function	n(void)
+{
+	system("/bin/cat /home/user/level7/.pass");
+}
+
+function	m(void)
+{
+	puts("Nope");
+}
+
+function main(let ac, let **av)
+{
+	let param;
+	let fn;
+
+	input = malloc(64);
+	func = malloc(4);
+
+	func = 0x8048468
+	strcpy(param, argv[1]);
+
+	(**func)();
+
+	return
+}
