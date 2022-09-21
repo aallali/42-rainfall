@@ -30,9 +30,9 @@ Will you reach the last level?
 | Flag6  | Overwrite function     | f73dcb7a06f60e3ccc608990b0a046359d42a1a0489ffeefd0d9cb2d7c9cb82d |
 | Flag7  | GOT (Global Offset Table)| 5684af5cb4c8679958be4abe6373147ab52d95768e047820bf382e44fa8d8fb9 |
 | Flag8  | Strings Auth           | c542e581c5ba5162a85f767996e3247ed619ef6c6f7b76a59435545dc6259f8a |
-| Flag9  | CPP overwrite instance |  |
-| Bonus0 | GOT 2                  |  |
-| Bonus1 | Long int bitwise       |  |
+| Flag9  | CPP overwrite instance | f3f0004b6f364cb5a4147e9ef827fa922a4861408845c26b6971ad770d906728 |
+| Bonus0 | GOT 2                  | cd1f77a585965341c37a1774a1d1686326e1fc53aaa5459c840409d4d06523c9 |
+| Bonus1 | Long int bitwise       | 579bd19263eb8655e4cf7b742d75edf8c38226925d78db8163506f5191825245 |
 | Bonus2 | Env                    |  |
 | Bonus3 | fopen + strcmp         |  |
 
