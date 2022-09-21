@@ -33,8 +33,8 @@ Will you reach the last level?
 | Flag9  | CPP overwrite instance | f3f0004b6f364cb5a4147e9ef827fa922a4861408845c26b6971ad770d906728 |
 | Bonus0 | GOT 2                  | cd1f77a585965341c37a1774a1d1686326e1fc53aaa5459c840409d4d06523c9 |
 | Bonus1 | Long int bitwise       | 579bd19263eb8655e4cf7b742d75edf8c38226925d78db8163506f5191825245 |
-| Bonus2 | Env                    |  |
-| Bonus3 | fopen + strcmp         |  |
+| Bonus2 | Env                    | 71d449df0f960b36e0055eb58c14d0f5d0ddc0b35328d657f91cf0df15910587 |
+| Bonus3 | fopen + strcmp         | 3321b6f81659f9a71c76616f606e4b50189cecfea611393d5d649f75e157353c |
 
 ### Ressources :
 | subject     | link          |
