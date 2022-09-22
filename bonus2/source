@@ -1,0 +1,48 @@
+int language = 0 // 0x08049988 <=== (gdb) info var
+
+
+void greetuser(char *mainBuffer) {
+
+    char buffer[64];
+
+    if (language == 1) 
+        strcpy(buffer, "Hyvää päivää ");
+    
+    if (language == 2) 
+        strcpy(buffer, "Goedemiddag! ");
+    
+    if (language == 0) 
+        strcpy(buffer, "Hello ");
+    
+    strcat(buffer, mainBuffer)
+    puts(buffer)
+
+}
+int main(int argc, char **argv) {
+    if (argc != 3) { 0x08048538 <+15>
+        return (1)
+    }
+
+    char *buffer[72] // = esp+0x50 // 40+32
+    char *envLang // = esp+0x9c
+
+    memset(buffer, 0, 76) // 0x08048548 <+31>
+    strncpy(buffer, argv[1], 40) //  0x0804855c <+51>
+    strncpy(&buffer[40], argv[2], 32) //  0x0804857c <+83>
+
+    envLang = getenv("LANG") 
+
+    if (envLang != 0) { // 0x0804859f <+118>
+        if (memcmp(envLang, "fi", 2) == 0) { // 0x080485bc <+147>
+            language = 1
+        }
+
+           if (memcmp(envLang, "ni", 2) == 0) { // 0x080485eb <+194>
+            language = 2
+        }
+    }
+
+    greetuser(buffer) // 0x08048618 <+239>
+
+    return (0)
+}
