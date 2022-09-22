@@ -59,7 +59,7 @@ _`<+18> -> <+25> : exit function`_
 #### Solution :
 ---
 
-##### explanation of he exploit:
+##### explanation of the exploit:
 
 since the function `o` that calls the shell is not called in `n` function nor the main
 so the idea here is : find a a vulnerability to call `o` from `n`
