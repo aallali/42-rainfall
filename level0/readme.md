@@ -6,16 +6,16 @@
 
 ### 0x08048ec0 : main() : disassembly
 - notebook: (to convert `hex` to `dec` and assign variable names for better reading)
-```c
+```js
 {
-    int argc = ebp+0x8
-    char **argv = ebp+12
+    var argc = ebp+0x8
+    var **argv = ebp+12
 
-    char arg1Execv = esp+16
-    char arg2Execv = esp+20
+    var arg1Execv = esp+16
+    var arg2Execv = esp+20
 
-    const uid = esp+24
-    const gid = esp+28
+    var uid = esp+24
+    var gid = esp+28
 
     // ebp+0xc ... ebp+12
     // 0x1a7 ... 423
