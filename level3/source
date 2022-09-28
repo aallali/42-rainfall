@@ -1,0 +1,21 @@
+int m = 0;
+
+void v() {
+    const *buffer[512]
+
+    fgets(buffer, 512, stdin);
+    printf(bufffer);
+
+    if (m == 64) {
+        fwrite("Wait what?!\n", 1, 12, stdout);
+        system("/bin/sh");
+    }
+
+    return 
+}
+
+int main(int argc(ebp+0x8), char **argv(ebp+12)) {
+    v()
+    return;
+    
+}
