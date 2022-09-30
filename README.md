@@ -3,6 +3,16 @@ Rainfall is an iso challenge slightly more complex than [Snow Crash][0].
 We will have to dive deep into reverse engineering, learn to reconstruct a code, and understand it to detect faults. 
 Will you reach the last level? 
 
+
+
+
+### Ressources (Important before start the project) :
+| subject     | link          |
+|:-----------:|------------------------|
+| How Stack works | [link][2] |
+| Assembly Basics | [link][3]|
+| get buffer offset | [link][1]     |
+
 #### GDB Commands:
 |Command                      | Description |
 |:---------------------------:|-------------|
@@ -36,13 +46,27 @@ Will you reach the last level?
 | Bonus2 | Env                    | 71d449df0f960b36e0055eb58c14d0f5d0ddc0b35328d657f91cf0df15910587 |
 | Bonus3 | fopen + strcmp         | 3321b6f81659f9a71c76616f606e4b50189cecfea611393d5d649f75e157353c |
 
-### Ressources :
-| subject     | link          |
-|:-----------:|------------------------|
-| get buffer offset | [link][1]     |
 
 
- 
+### GDB commands cheats :
+- switch to intel + enable cursor scroll + set hook-stop with general details(asm, info frame, info registers, 40 address of the stack $ESP)
+    ```
+    set disassembly-flavor intel
+    set height 0
+    define hook-stop
+    disass
+    echo ------------------------- [FRAME] -------------------------\n
+    info frame
+    echo ------------------------- [REGISTERS] -------------------------\n
+    info reg
+    echo ------------------------- [ESP] -------------------------\n
+    x/10wx $esp
+    end
+    ```
+
 [0]: https://github.com/aallali/Snow-Crash
 [1]: https://wiremask.eu/tools/buffer-overflow-pattern-generator/
+[2]: https://beta.hackndo.com/stack-introduction/
+[3]: https://beta.hackndo.com/assembly-basics/
+
 
