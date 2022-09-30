@@ -249,7 +249,7 @@ lets break point after the the gets call so we can see the stack after being fil
 so our __EIP__ is at ___0xbffff71c___ (108 bytes from the ESP) containing : ___0x0804854a___ (which is main<+11> Leave instruction)
 - lets view our stack now:
 
-    @import "./Ressources/level2-stack-overflow-anim.png" 
+    [![stack view](./Ressources/level2-stack-overflow-anim.png)](./Ressources/level2-stack-overflow-anim.png)
 
     the start of the our buffer wher the user input is taken its at 0x41414141 (AAAA)
     and we notice our eip away from it with 80 bytes(4 * 4 * 5) 
