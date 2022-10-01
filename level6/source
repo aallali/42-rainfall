@@ -1,25 +1,22 @@
-function	n(void)
-{
-	system("/bin/cat /home/user/level7/.pass");
+void n() {
+    system("/bin/cat /home/user/level7/.pass");
+    return;
 }
 
-function	m(void)
-{
-	puts("Nope");
+void m() {
+    puts("Nope");
+    return;
 }
 
-function main(let ac, let **av)
-{
-	let param;
-	let fn;
+int main(int argc(ebp+0x8), char **argv(ebp+12)) {
+	const argBuffer = malloc(64);
+	const funcBuffer = malloc(4);
 
-	input = malloc(64);
-	func = malloc(4);
+	funcBuffer = 0x8048468
+	strcpy(argBuffer, argv[1]);
 
-	func = 0x8048468
-	strcpy(param, argv[1]);
+	(**funcBuffer)();
 
-	(**func)();
-
-	return
+    return;
+    
 }
