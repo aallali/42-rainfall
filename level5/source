@@ -1,21 +1,20 @@
 
-function	o()
-{
-	system("/bin/sh");
-	exit(1)
+void o() {
+    system("/bin/sh");
+    exit(1);
 }
 
-function	n()
-{
-	char	buffer[512];
+void n() {
 
-	fgets(buffer, 512, stdin);
-	printf(buffer);
-	exit(1);
+    char *buffer_1[512];
+
+    fgets(str, 512, stdin);
+    printf(buffer_1);
+    
+    exit(1);
 }
 
-function		main()
-{
-	n();
-	return 
+int main() {
+    n()
+    return;
 }
