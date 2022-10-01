@@ -1,0 +1,26 @@
+int m = 0;
+
+void p(arg1) {
+    printf(arg1);
+    return;
+}
+
+void n() {
+    char *buffer_1[512];
+
+    fgets(buffer_1, 512, stdin);
+
+    p(buffer_1);
+
+    if (m == 16930116) {
+        system("/bin/cat /home/user/level5/.pass");
+    }
+
+    return;
+}
+
+int main(int argc(ebp+0x8), char **argv(ebp+12)) {
+    n()
+    return (0);
+    
+}
