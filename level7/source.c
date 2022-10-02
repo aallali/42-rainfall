@@ -13,11 +13,11 @@ function main() {
 
     mTwo = malloc(8) // 0x0804a028
     mTwo[0] = 2
-    mTwo[1] = malloc(8) 0x0804a038
+    mTwo[1] = malloc(8) // 0x0804a038
 
   
-    strcpy(*mOne[1], argv[1])
-    strcpy(*mTwo[1], argv[2])
+    strcpy(mOne[1], argv[1])
+    strcpy(mTwo[1], argv[2])
 
     let password = fopen("/home/user/level8/.pass", "r")
     fgets(c, 68, password)
