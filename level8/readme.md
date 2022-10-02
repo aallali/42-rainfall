@@ -360,6 +360,7 @@ end
 
     - **auth allali**
     - **service AAAA**
+    
     look at the screenshots:
 
         ![stack view](./Ressources/gdb-auth.jpeg)
