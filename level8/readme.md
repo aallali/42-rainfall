@@ -361,9 +361,11 @@ end
     - **auth allali**
     - **service AAAA**
     look at the screenshots:
+
     ![stack view](./Ressources/gdb-auth.jpeg)
-    **green** : where our input is saved (allali\n)
-    **red** : what the program checks to give  us the shell
+
+    - **green** : where our input is saved (allali\n)
+    - **red** : what the program checks to give  us the shell
     - you may think lets just fill the auth area until we reach it,
         smart ass xD the prgramm doesnt clone into the memory until the the user input is less that 31 character
         ```js
@@ -373,16 +375,16 @@ end
         ---
         ![stack view](./Ressources/gdb-service-AAAA.png)
 
-        **green** : the auth content (allali\n)
-        **blue**  : the service content ( AAAA), notice that the space after `service AAAA` is copied too
-        **red**   : the area that needs to be != null
+        - **green** : the auth content (allali\n)
+        - **blue**  : the service content ( AAAA), notice that the space after `service AAAA` is copied too
+        - **red**   : the area that needs to be != null
 
         ---
         ![stack view](./Ressources/gdb-service-BBB.png)
 
-        **green** : the auth content (allali)
-        **blue**  : the first service content ( AAAA), notice that the space after `service AAAA` is copied too
-        **red**   : the second service content ( BBBB) and same time its writing in the area wanted which is auth+32,
+        - **green** : the auth content (allali)
+        - **blue**  : the first service content ( AAAA), notice that the space after `service AAAA` is copied too
+        - **red**   : the second service content ( BBBB) and same time its writing in the area wanted which is auth+32,
 
         ---
 by analysing that we come with a conclustion by writing more in the memory we will surely reach the area wanted which is 30 bytes away from the start of auth pointer (0x8041008)
