@@ -362,10 +362,10 @@ end
     - **service AAAA**
     look at the screenshots:
 
-    ![stack view](./Ressources/gdb-auth.jpeg)
+        ![stack view](./Ressources/gdb-auth.jpeg)
 
-    - **green** : where our input is saved (allali\n)
-    - **red** : what the program checks to give  us the shell
+        - **green** : where our input is saved (allali\n)
+        - **red** : what the program checks to give  us the shell
     - you may think lets just fill the auth area until we reach it,
         smart ass xD the prgramm doesnt clone into the memory until the the user input is less that 31 character
         ```js
