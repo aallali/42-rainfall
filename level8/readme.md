@@ -358,10 +358,10 @@ end
 
 1. lets try give the following inputs:
 
-    - **auth allali**
-    - **service AAAA**
-    
-    look at the screenshots:
+    **auth allali**
+    **service AAAA**
+
+    - look at the screenshots:
 
         ![stack view](./Ressources/gdb-auth.jpeg)
 
