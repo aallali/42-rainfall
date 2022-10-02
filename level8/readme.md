@@ -370,22 +370,29 @@ end
         if (strlen(inputBuffer + 5) <= 30)
             strcpy(auth, inputBuffer + 5);
         ```
+        ---
         ![stack view](./Ressources/gdb-service-AAAA.png)
-    **green** : the auth content (allali\n)
-    **blue**  : the service content ( AAAA), notice that the space after `service AAAA` is copied too
-    **red**   : the area that needs to be != null
-    ![stack view](./Ressources/gdb-service-BBB.png)
-    **green** : the auth content (allali)
-    **blue**  : the first service content ( AAAA), notice that the space after `service AAAA` is copied too
-    **red**   : the second service content ( BBBB) and same time its writing in the area wanted which is auth+32,
-    
-    by analysing that we come with a conclustion by writing more in the memory we will surely reach the area wanted which is 30 bytes away from the start of auth pointer (0x8041008)
+
+        **green** : the auth content (allali\n)
+        **blue**  : the service content ( AAAA), notice that the space after `service AAAA` is copied too
+        **red**   : the area that needs to be != null
+
+        ---
+        ![stack view](./Ressources/gdb-service-BBB.png)
+
+        **green** : the auth content (allali)
+        **blue**  : the first service content ( AAAA), notice that the space after `service AAAA` is copied too
+        **red**   : the second service content ( BBBB) and same time its writing in the area wanted which is auth+32,
+
+        ---
+by analysing that we come with a conclustion by writing more in the memory we will surely reach the area wanted which is 30 bytes away from the start of auth pointer (0x8041008)
 
 #### possible solutions:
 1. we can either go for service command 2 times no matter the input
 1. or fill 16 bytes with one service __service[16 characters]__
 
     ![stack view](./Ressources/gdb-service-AABBCCCDDE.png) 
+
     __SEEE :)__ : since service is not limited with a specefic length , we were able to fill it with 16 bytes and that led to write in memory until we reached the area checked for shell execution, which is at the offset of 16
 1. mmmmmm  i dont know any **third solution** to be honest, **if you KNOW**, **open a pr <3**
 ---
