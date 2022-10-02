@@ -1,0 +1,38 @@
+const *auth;
+const *service;
+function main() {
+    const *inputBuffer[160];
+
+    while(true) {
+
+        printf("%p, %p \n", auth, service);
+   
+        if (fgets(buffer, 128, stdin) != 0) {
+            // -----------------------------------------        
+            if (strcmp(inputBuffer, "auth ") == 0) {
+
+                auth = malloc(4);
+                auth[0] = 0;
+
+                if (strlen(inputBuffer + 5) <= 30)
+                    strcpy(auth, inputBuffer + 5);
+            }
+            // -----------------------------------------
+            if (strcmp(inputBuffer, "reset") == 0) 
+                free(auth);
+            
+            // -----------------------------------------
+            if (strcmp(inputBuffer + 6, "service") == 0) 
+                service = strdup(inputBuffer + 7);
+            
+            // -----------------------------------------
+            if (strcmp(inputBuffer + 5, "login") == 0) 
+                if (auth[32] == 0) 
+                    fwrite("Password:\n", 1, 10, stdout);
+                else
+                    system("/bin/sh");
+        }
+    // -----------------------------------------
+    }
+    return (0);
+}
