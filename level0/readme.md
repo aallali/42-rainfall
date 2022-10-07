@@ -26,7 +26,7 @@
     // 0x1c ... 28
 }
 ```
-* __`<0> -> <+6> : prepare stack frame for n function with size 160`__
+* __`<0> ➜ <+6> : prepare stack frame for n function with size 160`__
 
 ```c
 0x08048ec0 <+0>:	push   ebp
@@ -34,8 +34,8 @@
 0x08048ec3 <+3>:	and    esp,0xfffffff0
 0x08048ec6 <+6>:	sub    esp,32
 ```
-* __`<+9> -> <+20> : call atoi with the first argument (argv[1])`__
-* __`<+25> -> <+30> : if atoi(argv[1]) != 423  jump to <main+152>`__
+* __`<+9> ➜ <+20> : call atoi with the first argument (argv[1])`__
+* __`<+25> ➜ <+30> : if atoi(argv[1]) != 423  jump to <main+152>`__
 ```c
 0x08048ec9 <+9>:	mov    eax,DWORD PTR [argv] // eax = argv
 0x08048ecc <+12>:	add    eax,4 // eax = argv[1]
@@ -46,7 +46,7 @@
 0x08048ede <+30>:	jne    0x8048f58 <main+152>
 if (atoi(argv[1] != 423) { jump to main+152 } 
 ```
-* __`<+32> -> <+44> : call strdup with the string "/bin/sh" and put the return in esp+16(arg1Execv)`__
+* __`<+32> ➜ <+44> : call strdup with the string "/bin/sh" and put the return in esp+16(arg1Execv)`__
 * __`<+48> : put 0 as value in esp+20(arg2Execv) `__
 ```c
 0x08048ee0 <+32>:	mov    DWORD PTR [esp],0x80c5348 // "/bin/sh"
@@ -56,20 +56,20 @@ if (atoi(argv[1] != 423) { jump to main+152 }
 arg1Execv = strdup("/bin/sh")
 arg2Execv = 0
 ```
-* __`<+56> -> <+61> : call getgid to get the GID value from system and put it in esp+28(gid)`__
+* __`<+56> ➜ <+61> : call getgid to get the GID value from system and put it in esp+28(gid)`__
 ```c
 0x08048ef8 <+56>:	call   0x8054680 <getegid>
 0x08048efd <+61>:	mov    DWORD PTR [gid],eax 
 gid = getegid()
 
 ```
-* __`<+56> -> <+61> : call getuid to get the UID value from system and put it in esp+24(uid)`__
+* __`<+56> ➜ <+61> : call getuid to get the UID value from system and put it in esp+24(uid)`__
 ```c
 0x08048f01 <+65>:	call   0x8054670 <geteuid>
 0x08048f06 <+70>:	mov    DWORD PTR [uid],eax
 uid = geteuid()
 ```
-* __`<+74> -> <+97> : call setresgid with 3 params , gid  X 3 : (gid, gid, gid)`__
+* __`<+74> ➜ <+97> : call setresgid with 3 params , gid  X 3 : (gid, gid, gid)`__
 ```c
 0x08048f0a <+74>:	mov    eax,DWORD PTR [gid]
 0x08048f0e <+78>:	mov    DWORD PTR [esp+8],eax // param3 = gid
@@ -80,7 +80,7 @@ uid = geteuid()
 0x08048f21 <+97>:	call   0x8054700 <setresgid>
 setresgid(gid, gid, gid)
 ```
-* __`<+102> -> <+125> : call setresuid with 3 params , uid  X 3 : (uid, uid, uid)`__
+* __`<+102> ➜ <+125> : call setresuid with 3 params , uid  X 3 : (uid, uid, uid)`__
 ```c
 0x08048f26 <+102>:	mov    eax,DWORD PTR [uid]
 0x08048f2a <+106>:	mov    DWORD PTR [esp+8],eax
@@ -91,7 +91,7 @@ setresgid(gid, gid, gid)
 0x08048f3d <+125>:	call   0x8054690 <setresuid>
 setresuid(uid, uid, uid)
 ```
-* __`<+130> -> <+145> :call execv with "/bin/sh" and [arg1ExecV, arg2ExecV]`__
+* __`<+130> ➜ <+145> :call execv with "/bin/sh" and [arg1ExecV, arg2ExecV]`__
 * __`<+150> : jump to the instruction +192 which is the return step`__
 
 ```c
@@ -106,7 +106,7 @@ setresuid(uid, uid, uid)
 execv("/bin/sh", [arg1Execv, arg2Execv])
 jump to return
 ```
-* __`<+152> -> <+187> : call fwrite with params set in the stack by order fwrite(esp, esp+4, esp+8, esp+12)`__
+* __`<+152> ➜ <+187> : call fwrite with params set in the stack by order fwrite(esp, esp+4, esp+8, esp+12)`__
 ```c
 0x08048f58 <+152>:	mov    eax,ds:0x80ee170 // stderr
 0x08048f5d <+157>:	mov    edx,eax
@@ -118,7 +118,7 @@ jump to return
 0x08048f7b <+187>:	call   0x804a230 <fwrite>
 fwrite("No !\n", 1, 5, stderr)
 ```
-* __`<+192> -> <+198> : exit the program with 0 equivalent to return(0)`__
+* __`<+192> ➜ <+198> : exit the program with 0 equivalent to return(0)`__
 ```c
 0x08048f80 <+192>:	mov    eax,0 // eax = 0
 0x08048f85 <+197>:	leave  
@@ -126,7 +126,7 @@ fwrite("No !\n", 1, 5, stderr)
 ```
 
 ### Stack Illustration
-```shell
+```c
 +-------------------+ 
 [      **argv       ]
 +-------------------+ +12
