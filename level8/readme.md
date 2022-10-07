@@ -29,7 +29,7 @@
 }
 ```
 
-- **`<0> -> <+8> : prepare stack frame for n function with size 160`**
+- **`<0> ➜ <+8> : prepare stack frame for n function with size 160`**
 
 ```c
 0x08048564 <+0>:	push   ebp
@@ -45,7 +45,7 @@
 0x08048572 <+14>:	jmp    0x8048575 <main+17>
 0x08048574 <+16>:	nop
 ```
-- **`<+16> -> <+45> : print the addresses of auth and service in order to screen`**
+- **`<+16> ➜ <+45> : print the addresses of auth and service in order to screen`**
 ```c
 
 0x08048575 <+17>:	mov    ecx,DWORD PTR ds:service
@@ -57,7 +57,7 @@
 0x08048591 <+45>:	call   0x8048410 <printf@plt>
 printf("%p, %p \n", auth, service);
 ```
-- **`<+50> -> <+74> : takes 159 character from user input and save it to inputBuffer`**
+- **`<+50> ➜ <+74> : takes 159 character from user input and save it to inputBuffer`**
 ```c
 0x08048596 <+50>:	mov    eax,ds:stdin
 0x0804859b <+55>:	mov    DWORD PTR [esp+8],eax
@@ -67,13 +67,13 @@ printf("%p, %p \n", auth, service);
 0x080485ae <+74>:	call   0x8048440 <fgets@plt>
 fgets(inputBuffer, 160, stdin);
 ```
-- **`<+79> -> <+81> : if user input is empty skip all and return to head of while loop`**
+- **`<+79> ➜ <+81> : if user input is empty skip all and return to head of while loop`**
 ```c
 0x080485b3 <+79>:	test   eax,eax
 0x080485b5 <+81>:	je     0x804872c <main+456>
 ```
-- **`<+87> -> <+121> : repz cmps equivalent to strNcmp, compare inputBuffer to auth+space`**
-- **`<+124> -> <+126> : if the comparison is not valid: jump to +222 the next instruction where "reset" is verified`**
+- **`<+87> ➜ <+121> : repz cmps equivalent to strNcmp, compare inputBuffer to auth+space`**
+- **`<+124> ➜ <+126> : if the comparison is not valid: jump to +222 the next instruction where "reset" is verified`**
 ```c
 0x080485bb <+87>:	lea    eax,[inputBuffer]
 0x080485bf <+91>:	mov    edx,eax
@@ -93,8 +93,8 @@ fgets(inputBuffer, 160, stdin);
 0x080485e2 <+126>:	jne    0x8048642 <main+222>
 if (strNcmp(inputBuffer, "auth ", 5) === 0) { jump to <main+222>}
 ```
-- **`<+128> -> <+140> : allocate 4 bytes in the Heap and put the return address in auth`**
-- **`<+145> -> <+150> : set first case of auth to 0 , auth[0]`**
+- **`<+128> ➜ <+140> : allocate 4 bytes in the Heap and put the return address in auth`**
+- **`<+145> ➜ <+150> : set first case of auth to 0 , auth[0]`**
 ```c
 0x080485e4 <+128>:	mov    DWORD PTR [esp],4
 0x080485eb <+135>:	call   0x8048470 <malloc@plt>
@@ -104,8 +104,8 @@ auth = malloc(4);
 0x080485fa <+150>:	mov    DWORD PTR [eax],0
 auth[0] = 0
 ```
-- **`<+156> -> <+188> : reqpnz scas equivalent to strlen in libc, calculate length of inputBuffer`**
-- **`<+190> -> <+190> : check if length inputBuffer strictly superior than 30, if true jump to +222 (instruction where reset is verified)`**
+- **`<+156> ➜ <+188> : reqpnz scas equivalent to strlen in libc, calculate length of inputBuffer`**
+- **`<+190> ➜ <+190> : check if length inputBuffer strictly superior than 30, if true jump to +222 (instruction where reset is verified)`**
 ```c
 0x08048600 <+156>:	lea    eax,[inputBuffer] // eax = inputBuffer
 0x08048604 <+160>:	add    eax,5 // eax = inputBuffer + 5
@@ -123,7 +123,7 @@ auth[0] = 0
 0x08048628 <+196>:	ja     0x8048642 <main+222> // ja == Strictly Superior (Above)
 if (strlen(inputBuffer + 5) > 30) { jump to <main+222>}
 ```
-- **`<+198> -> <+217> : copy whatever comes after 5th index of inputBuffer in auth`**
+- **`<+198> ➜ <+217> : copy whatever comes after 5th index of inputBuffer in auth`**
 **`why the 5th index ? : becus its the length of word "auth " so we copy the value after "auth "`**
 ```c
 0x0804862a <+198>:	lea    eax,[inputBuffer]
@@ -134,8 +134,8 @@ if (strlen(inputBuffer + 5) > 30) { jump to <main+222>}
 0x0804863d <+217>:	call   0x8048460 <strcpy@plt>
 strcpy(auth, inputBuffer + 5);
 ```
-- **`<+222> -> <+256> : strNcmp : compare the input buffer to "reset" , if true : free auth memory area`**
-- **`<+259> -> <+261> : if the input is not "reset" jump +276 (instruction of service check)`**
+- **`<+222> ➜ <+256> : strNcmp : compare the input buffer to "reset" , if true : free auth memory area`**
+- **`<+259> ➜ <+261> : if the input is not "reset" jump +276 (instruction of service check)`**
 ```c
 0x08048642 <+222>:	lea    eax,[inputBuffer]
 0x08048646 <+226>:	mov    edx,eax
@@ -155,15 +155,15 @@ strcpy(auth, inputBuffer + 5);
 0x08048669 <+261>:	jne    0x8048678 <main+276>
 if (strNcmp(inputBuffer, "reset") != 0) { jump to <main+276>}
 ```
-- **`<+263> -> <+271> : free auth allocated area in memory`**
+- **`<+263> ➜ <+271> : free auth allocated area in memory`**
 ```c
 0x0804866b <+263>:	mov    eax,ds:auth
 0x08048670 <+268>:	mov    DWORD PTR [esp],eax
 0x08048673 <+271>:	call   0x8048420 <free@plt>
 free(auth);
 ```
-- **`<+276> -> <+310> : verify with strncmp if the input is "service", if not true jump to +337 where login is checked`**
-- **`<+313> -> <+315> : ...`**
+- **`<+276> ➜ <+310> : verify with strncmp if the input is "service", if not true jump to +337 where login is checked`**
+- **`<+313> ➜ <+315> : ...`**
 ```c
 0x08048678 <+276>:	lea    eax,[inputBuffer]
 0x0804867c <+280>:	mov    edx,eax
@@ -183,7 +183,7 @@ free(auth);
 0x0804869f <+315>:	jne    0x80486b5 <main+337>
 if (strNcmp(inputBuffer, 6, "service") != 0) { jump to <main+337>}
 ```
-- **`<+317> -> <+332> : clone what comes after "service" (without a space) into the Heap and put return address in 'service' variable`**
+- **`<+317> ➜ <+332> : clone what comes after "service" (without a space) into the Heap and put return address in 'service' variable`**
 ```c
 0x080486a1 <+317>:	lea    eax,[inputBuffer]
 0x080486a5 <+321>:	add    eax,7
@@ -192,8 +192,8 @@ if (strNcmp(inputBuffer, 6, "service") != 0) { jump to <main+337>}
 0x080486b0 <+332>:	mov    ds:service,eax
 service = strdup(inputBuffer + 7);
 ```
-- **`<+337> -> <+371> : compare first 5 characters of inputBuffer to 'login'`**
-- **`<+374> -> <+376> : if inputBuffer != "login" repeat the while loop again until your battery die :) `**
+- **`<+337> ➜ <+371> : compare first 5 characters of inputBuffer to 'login'`**
+- **`<+374> ➜ <+376> : if inputBuffer != "login" repeat the while loop again until your battery die :) `**
 ```c
 0x080486b5 <+337>:	lea    eax,[inputBuffer]
 0x080486b9 <+341>:	mov    edx,eax
@@ -213,7 +213,7 @@ service = strdup(inputBuffer + 7);
 0x080486dc <+376>:	jne    0x8048574 <main+16>
 if (strNcmp(inputBuffer + 5, "login") != 0) { jump to <main+16>}
 ```
-- **`<+382> -> <+392> : if auth[32] == null print Password to screen`**
+- **`<+382> ➜ <+392> : if auth[32] == null print Password to screen`**
 ```c
 0x080486e2 <+382>:	mov    eax,ds:auth
 0x080486e7 <+387>:	mov    eax,DWORD PTR [eax+32]
@@ -221,7 +221,7 @@ if (strNcmp(inputBuffer + 5, "login") != 0) { jump to <main+16>}
 0x080486ec <+392>:	je     0x80486ff <main+411>
 if (auth[32] == 0) { jump to <main+411>}
 ```
-- **`<+394> -> <+401> : execute the shell`**
+- **`<+394> ➜ <+401> : execute the shell`**
 ```c
 0x080486ee <+394>:	mov    DWORD PTR [esp],0x8048833 // "/bin/sh"
 0x080486f5 <+401>:	call   0x8048480 <system@plt>
@@ -231,7 +231,7 @@ system("/bin/sh");
 ```c
 0x080486fa <+406>:	jmp    0x8048574 <main+16>
 ```
-- **`<+411> -> <+446> : print "Password:\n" to screen, nothing fancy xD hhhh`**
+- **`<+411> ➜ <+446> : print "Password:\n" to screen, nothing fancy xD hhhh`**
 ```c
 0x080486ff <+411>:	mov    eax,ds:stdout
 0x08048704 <+416>:	mov    edx,eax
@@ -250,7 +250,7 @@ fwrite("Password:\n", 1, 10, stdout);
 - **`<+456> : no operation instruction`**
 - **`<+457> : set eax = 0, so it will be used as return param`**
 - **`<+462> : ...`**
-- **`<+465> -> <+468> : ...`**
+- **`<+465> ➜ <+468> : ...`**
 ```c
 0x0804872c <+456>:	nop
 0x0804872d <+457>:	mov    eax,0
