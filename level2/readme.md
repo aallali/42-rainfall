@@ -1,5 +1,3 @@
-
-
 ### notes
 ```c
 0x080484d4  p
@@ -7,7 +5,7 @@
 ```
 
 ### 0x0804853f : main() : disassembly
-* __`<0> -> <+3> : prepare stack frame for main function`__
+* __`<0> ➜ <+3> : prepare stack frame for main function`__
 ```c
    0x0804853f <+0>:	push   ebp
    0x08048540 <+1>:	mov    ebp,esp
@@ -18,7 +16,7 @@
 0x08048545 <+6>:	call   0x80484d4 <p>
 ```
 
-* __`<+11> -> <+12> : exit the MAIN FUNCTION`__
+* __`<+11> ➜ <+12> : exit the MAIN FUNCTION`__
 ```c
 0x0804854a <+11>:	leave  
 0x0804854b <+12>:	ret  
@@ -39,7 +37,7 @@
     // 0xc  ... 12
 }
 ```
-* __`<0> -> <+3> : prepare stack frame for p function with size of 104`__
+* __`<0> ➜ <+3> : prepare stack frame for p function with size of 104`__
 ```c
 0x080484d4 <+0>:	push   ebp
 0x080484d5 <+1>:	mov    ebp,esp
