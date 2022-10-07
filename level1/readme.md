@@ -1,9 +1,7 @@
-
 ### notes
 ```c
 0x08048444  run : function not called in main
 0x08048480  main
-
 ```
 
 ### 0x08048480 : main() : disassembly
@@ -16,20 +14,20 @@
     char *buffer1[80-16=64] = esp+16
 }
 ```
-* __`<0> -> <+6> : prepare stack frame for n function with size 80`__
+* __`<0> ➜ <+6> : prepare stack frame for n function with size 80`__
 ```c
 0x08048480 <+0>:	push   ebp
 0x08048481 <+1>:	mov    ebp,esp
 0x08048483 <+3>:	and    esp,0xfffffff0
 0x08048486 <+6>:	sub    esp,80
 ```
-* __`<+9> -> <+16> : take input from user and save it into buffer1 using gets()`__
+* __`<+9> ➜ <+16> : take input from user and save it into buffer1 using gets()`__
 ```c
 0x08048489 <+9>:	lea    eax,[buffer1]
 0x0804848d <+13>:	mov    DWORD PTR [esp],eax
 0x08048490 <+16>:	call   0x8048340 <gets@plt>
 ```
-* __`<+21> -> <+22> : exit the main function`__
+* __`<+21> ➜ <+22> : exit the main function`__
 ```c
 0x08048495 <+21>:	leave  
 0x08048496 <+22>:	ret 
@@ -79,13 +77,13 @@ with the following input
 // 0x18 ... 24
 // 0x13 ... 19
 ```
-* __`<0> -> <+3> : prepare stack frame for n function with size 24`__
+* __`<0> ➜ <+3> : prepare stack frame for n function with size 24`__
 ```c
 0x08048444 <+0>:	push   ebp
 0x08048445 <+1>:	mov    ebp,esp
 0x08048447 <+3>:	sub    esp,24
 ```
-* __`<+6> -> <+41> : print "Good... Wait what?\n" on the screen with fwrite`__
+* __`<+6> ➜ <+41> : print "Good... Wait what?\n" on the screen with fwrite`__
 ```c
 0x0804844a <+6>:	mov    eax,ds:0x80497c0 // stdout
 0x0804844f <+11>:	mov    edx,eax
@@ -97,12 +95,12 @@ with the following input
 0x0804846d <+41>:	call   0x8048350 <fwrite@plt>
 fwrite("Good... Wait what?\n", 1, 19, stdout)
 ```
-* __`<+46> -> <+53> : call the shell process with system("/bin/sh")`__
+* __`<+46> ➜ <+53> : call the shell process with system("/bin/sh")`__
 ```c
 0x08048472 <+46>:	mov    DWORD PTR [esp],0x8048584 // "/bin/sh"
 0x08048479 <+53>:	call   0x8048360 <system@plt> // system("/bin/sh")
 ```
-* __`<+58> -> <+59> : leave the function/ quit the function`__
+* __`<+58> ➜ <+59> : leave the function/ quit the function`__
 ```c
 0x0804847e <+58>:	leave  
 0x0804847f <+59>:	ret 
