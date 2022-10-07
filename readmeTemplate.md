@@ -21,7 +21,7 @@
 
 }
 ```
-* __`<0> -> <+8> : prepare stack frame for n function with size 160`__
+* __`<0> ➜ <+8> : prepare stack frame for n function with size 160`__
 ```c
 0x080484f4 <+0>:	push   ebp
 0x080484f5 <+1>:	mov    ebp,esp
@@ -30,11 +30,11 @@
 0x080484f9 <+5>:	and    esp,0xfffffff0
 0x080484fc <+8>:	sub    esp,160 // ~0xa0
 ```
-* __`<+> -> <+> : ...`__
+* __`<+> ➜ <+> : ...`__
 ```
 ...
 ```
-* __`<+192> -> <+198> : exit the program with 0, equivalent to return(0)`__
+* __`<+192> ➜ <+198> : exit the program with 0, equivalent to return(0)`__
 ```c
 0x08048f80 <+192>:	mov    eax,0 // eax = 0
 0x08048f85 <+197>:	leave  
