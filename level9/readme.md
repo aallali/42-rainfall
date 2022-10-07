@@ -30,7 +30,7 @@
     0x10 ... 16
 }
 ```
-* __`<0> ➜ <+8> : prepare stack frame for main function with size 32`__
+* __`<0> ➜ <+7> : prepare stack frame for main function with size 32`__
 ```c
 0x080485f4 <+0>:	push   ebp
 0x080485f5 <+1>:	mov    ebp,esp
@@ -38,7 +38,7 @@
 0x080485f8 <+4>:	and    esp,0xfffffff0
 0x080485fb <+7>:	sub    esp,32
 ```
-* __`<+10> ➜ <+23> : ...`__
+* __`<+10> ➜ <+23> : exit with code 1 if no argument sent to program`__
 ```c
 0x080485fe <+10>:	cmp    DWORD PTR [argc],1
 0x08048602 <+14>:	jg     0x8048610 <main+28>
@@ -47,7 +47,7 @@
 if (argc <= 1)
     exit(1);
 ```
-* __`<+28> ➜ <+58> : ...`__
+* __`<+28> ➜ <+58> : create new instance of class N with value 5`__
 ```c
 0x08048610 <+28>:	mov    DWORD PTR [esp],108
 0x08048617 <+35>:	call   0x8048530 <_Znwj@plt>
@@ -58,7 +58,7 @@ if (argc <= 1)
 0x0804862e <+58>:	mov    DWORD PTR [buffer_1],ebx
 buffer_1 = N(5)
 ```
-* __`<+62> ➜ <+92> : ...`__
+* __`<+62> ➜ <+92> : create new instance of class N with value 6`__
 ```c
 0x08048632 <+62>:	mov    DWORD PTR [esp],108
 0x08048639 <+69>:	call   0x8048530 <_Znwj@plt>
@@ -69,7 +69,7 @@ buffer_1 = N(5)
 0x08048650 <+92>:	mov    DWORD PTR [buffer_2],ebx
 buffer_2 = N(6)
 ```
-* __`<+96> ➜ <+108> : ...`__
+* __`<+96> ➜ <+108> : put the address returned by instances created in two different buffer in our stack`__
 ```c
 0x08048654 <+96>:	mov    eax,DWORD PTR [buffer_1]
 0x08048658 <+100>:	mov    DWORD PTR [nFirst],eax
@@ -78,7 +78,7 @@ buffer_2 = N(6)
 nFirst = buffer_1
 nSecond = buffer_2
 ```
-* __`<+112> ➜ <+131> : ...`__
+* __`<+112> ➜ <+131> : call the method setAnnotation of the N class with first argument as param`__
 ```c
 0x08048664 <+112>:	mov    eax,DWORD PTR [argv]
 0x08048667 <+115>:	add    eax,4
@@ -89,7 +89,7 @@ nSecond = buffer_2
 0x08048677 <+131>:	call   0x804870e <_ZN1N13setAnnotationEPc> // N::setAnnotation(char*)
 buffer3.setAnnotation(argv[1]])
 ```
-* __`<+136> ➜ <+159> : ...`__
+* __`<+136> ➜ <+159> : call second instaance with two params (second instance, first instance)`__
 ```c
 0x0804867c <+136>:	mov    eax,DWORD PTR [nSecond]
 0x08048680 <+140>:	mov    eax,DWORD PTR [eax]
@@ -98,11 +98,11 @@ edx = **nSecond
 0x08048684 <+144>:	mov    eax,DWORD PTR [nFirst]
 0x08048688 <+148>:	mov    DWORD PTR [esp+4],eax // param2 = *nFirst
 0x0804868c <+152>:	mov    eax,DWORD PTR [nSecond]
-0x08048690 <+156>:	mov    DWORD PTR [esp],eax // param1 = *nSecond
+0x08048690 <+156>:	mov    DWORD PTR [esp],eax
 0x08048693 <+159>:	call   edx
-**nSecond(*nSecond, *nFirst)
+**nSecond(*nFirst)
 ```
-* __`<+161> ➜ <+165> : ...`__
+* __`<+161> ➜ <+165> : exit function`__
 ```c
 0x08048695 <+161>:	mov    ebx,DWORD PTR [ebp-4]
 0x08048698 <+164>:	leave  
@@ -115,8 +115,8 @@ edx = **nSecond
 - not really sure about the code prediction, it was a bit difficult to reverse that assembly 
 ```c
 class N {
-    int number
-    char *annotiation
+    private int number
+    private char *str
     operator+(N& x) {
         return this.number + x
     }
@@ -124,7 +124,7 @@ class N {
         return this.number - x
     }
     setAnnotation(char* txt) {
-        memcpy(this.annotiation, txt, len(txt))
+        memcpy(this.str, txt, len(txt))
     }
 }
 int main(int argc(argc), char **argv(ebp+12)) {
