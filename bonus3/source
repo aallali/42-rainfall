@@ -1,0 +1,31 @@
+int main(int argc(ebp+0x8), char **argv(ebp+12)) {
+
+    char *flagFile = esp+156 // ~0x9c
+    char *buffer[132] = esp+24 // ~0x18 
+    // we know the size of the buffer by calculating the gap between the flagFile and buffer 0x9c-0x18 = 156-24 = 132
+
+    flagFile = fopen("/home/user/end/.pass", "r")
+    memset(buffer, 0, 132)
+
+    if (flagFile == 0 || argc != 2) {
+        return (-1);
+    }
+
+    if (argc == 2) {
+        fread(buffer, 1, 66, flagFile);
+        buffer[65] = 0 ;
+
+        int nb = atoi(argv[1])
+        buffer[nb] = 0;
+
+        fread(&buffer[66], 1, 65, flagFile); 
+        fclose(flagFile);
+
+        if (strcmp(buffer, argv[1]) != 0) {
+            puts(&buffer[66])   ;
+        }
+        else
+            execl("/bin/sh", "sh", 0);
+    }
+    return (0);
+}
